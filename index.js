@@ -7,7 +7,11 @@ var delay = (seconds) => new Promise((resolve, reject) => {
 
 console.log('starting delays');
 
-delay(2).then(console.log );
+// We can chain as many promise here but in the neat way
+delay(2)
+  .then(console.log )
+  .then(() => 42)
+  .then((number) => console.log(`hello world ${number}`));
 // delay(2).then((message) => console.log(message));
 
 
