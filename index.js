@@ -1,11 +1,48 @@
 var fs = require('fs');
-var { promisify } = require('util');
+var beep = () => process.stdout.write("\x07");
 
-var writeFile = promisify(fs.writeFile);
+const doStuffSequentially = () => {
+    console.log('starting');
+    setTimeout(() => {
+        console.log('waiting');
+        setTimeout(() => {
+            console.log('waiting some more');
+            fs.writeFile('file.txt', 'Sample File...', error => {
+                if (error) {
+                    console.error(error);
+                } else {
+                    beep();
+                    console.log('file.txt created')
+                    setTimeout(() => {
+                        beep();
+                        fs.unlink('file.txt', error => {
+                            if (error) {
+                                console.error(error);
+                            } else {
+                                console.log('file.txt removed');
+                                console.log('sequential execution complete');
+                            }
+                        })
+                    }, 3000)
+                }
+            });
+        }, 2000)
+    }, 1000)
+}
 
-writeFile('sample.txt', 'This is a sample file')
-  .then(() => console.log('file created successfully'))
-  .catch((error) => console.log('error creating file'));
+doStuffSequentially();
+
+
+// ----------------------------------------------------------------
+
+// var fs = require('fs');
+// var { promisify } = require('util');
+
+// var writeFile = promisify(fs.writeFile);
+
+// writeFile('sample.txt', 'This is a sample file')
+//   .then(() => console.log('file created successfully'))
+//   .catch((error) => console.log('error creating file'));
 
 // var delay = (seconds, callback) => {
 //   if(seconds > 3) {
