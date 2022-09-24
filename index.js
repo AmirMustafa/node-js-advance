@@ -57,7 +57,10 @@ const doStuffSequentially = () => Promise.resolve()
 //     }, 1000)
 // }
 
-doStuffSequentially();
+doStuffSequentially()
+  .then(() => console.log('again again'))
+  .then(() => doStuffSequentially())
+  .then(() => console.log('enough already'))
 
 
 // ----------------------------------------------------------------
