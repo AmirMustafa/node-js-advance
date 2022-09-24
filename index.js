@@ -8,25 +8,40 @@ var delay = (seconds) => new Promise((resolves) => {
 });
 var beep = () => process.stdout.write("\x07");
 
-const doStuffSequentially = () => Promise.resolve()
-  .then(() => console.log('starting'))
-  .then(() => delay(1))
-  .then(() => 'waiting')
-  .then(console.log)
-  .then(() => delay(2))
-  .then(() => writeFile('file.txt', 'Sample File...'))
-  .then(() => 'waiting some more')
-  .then(console.log)
-  .then(beep)
-  .then(() => 'file.txt created')
-  .then(console.log)
-  .then(() => delay(3))
-  .then(() => unlink('file.txt'))
-  .then (beep)
-  .then(() => 'file.txt removed')
-  .then(() => 'sequential execution complete')
-  .then(console.log)
-  .catch(console.error)
+const doStuffSequentially = async () => {
+  console.log('starting');
+  await delay(1);
+  console.log('waiting');
+  await delay(2);
+  await writeFile('file.txt', 'Sample File...');
+  console.log('waiting some more');
+  beep();
+  console.log('file.txt created');
+  await unlink('file.txt');
+  beep();
+  console.log('file.txt removed');
+  console.log('sequential execution complete');
+}
+
+// const doStuffSequentially = () => Promise.resolve()
+//   .then(() => console.log('starting'))
+//   .then(() => delay(1))
+//   .then(() => 'waiting')
+//   .then(console.log)
+//   .then(() => delay(2))
+//   .then(() => writeFile('file.txt', 'Sample File...'))
+//   .then(() => 'waiting some more')
+//   .then(console.log)
+//   .then(beep)
+//   .then(() => 'file.txt created')
+//   .then(console.log)
+//   .then(() => delay(3))
+//   .then(() => unlink('file.txt'))
+//   .then (beep)
+//   .then(() => 'file.txt removed')
+//   .then(() => 'sequential execution complete')
+//   .then(console.log)
+//   .catch(console.error)
 
 // const doStuffSequentially = () => {
 //     console.log('starting');
@@ -57,10 +72,7 @@ const doStuffSequentially = () => Promise.resolve()
 //     }, 1000)
 // }
 
-doStuffSequentially()
-  .then(() => console.log('again again'))
-  .then(() => doStuffSequentially())
-  .then(() => console.log('enough already'))
+doStuffSequentially();
 
 
 // ----------------------------------------------------------------
