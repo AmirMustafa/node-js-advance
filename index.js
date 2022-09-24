@@ -1,18 +1,25 @@
+var fs = require('fs');
 var { promisify } = require('util');
 
-var delay = (seconds, callback) => {
-  if(seconds > 3) {
-    callback(new Error(`${seconds} is too long`));
-  } else {
-    setTimeout(callback(null, `the ${seconds} delay is over.`, seconds*1000));
-  }
-};
+var writeFile = promisify(fs.writeFile);
 
-var promiseDelay = promisify(delay);
+writeFile('sample.txt', 'This is a sample file')
+  .then(() => console.log('file created successfully'))
+  .catch((error) => console.log('error creating file'));
 
-promiseDelay(6)
-  .then(console.log)
-  .catch((err) => console.log(`error: ${err.message}`))
+// var delay = (seconds, callback) => {
+//   if(seconds > 3) {
+//     callback(new Error(`${seconds} is too long`));
+//   } else {
+//     setTimeout(callback(null, `the ${seconds} delay is over.`, seconds*1000));
+//   }
+// };
+
+// var promiseDelay = promisify(delay);
+
+// promiseDelay(6)
+//   .then(console.log)
+//   .catch((err) => console.log(`error: ${err.message}`))
 
 // delay(4, (error, message) => {
 //   if(error) {
