@@ -3,25 +3,41 @@ var { promisify } = require('util');
 
 var writeFile = promisify(fs.writeFile);
 var unlink = promisify(fs.unlink);
+var readdir = promisify(fs.readdir);
+
 var delay = (seconds) => new Promise((resolves) => {
   setTimeout(resolves, seconds*1000);
 });
 var beep = () => process.stdout.write("\x07");
 
-const doStuffSequentially = async () => {
-  console.log('starting');
-  await delay(1);
-  console.log('waiting');
-  await delay(2);
-  await writeFile('file.txt', 'Sample File...');
-  console.log('waiting some more');
-  beep();
-  console.log('file.txt created');
-  await unlink('file.txt');
-  beep();
-  console.log('file.txt removed');
-  console.log('sequential execution complete');
+async function start() {
+  const files = await readdir(__dirname);
+  console.log(files);
 }
+
+start();
+
+// Example 1
+// const doStuffSequentially = async () => {
+//   console.log('starting');
+//   await delay(1);
+//   console.log('waiting');
+//   await delay(2);
+//   try {
+//     await writeFile('file.txt', 'Sample File...');
+//     console.log('waiting some more');
+//     beep();
+//   } catch (err) {
+//     console.log(err);
+//   }
+//   console.log('file.txt created');
+//   await unlink('file.txt');
+//   beep();
+//   console.log('file.txt removed');
+//   console.log('sequential execution complete');
+
+//   return Promise.resolve();
+// }
 
 // const doStuffSequentially = () => Promise.resolve()
 //   .then(() => console.log('starting'))
@@ -72,7 +88,10 @@ const doStuffSequentially = async () => {
 //     }, 1000)
 // }
 
-doStuffSequentially();
+// doStuffSequentially()
+//   .then(() => {
+//     // DO Something
+//   })
 
 
 // ----------------------------------------------------------------
