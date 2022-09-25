@@ -8,14 +8,24 @@ var readdir = promisify(fs.readdir);
 var delay = (seconds) => new Promise((resolves) => {
   setTimeout(resolves, seconds*1000);
 });
-var beep = () => process.stdout.write("\x07");
 
-async function start() {
-  const files = await readdir(__dirname);
-  console.log(files);
-}
 
-start();
+Promise.all([
+  writeFile('readme.md', 'Hello World!'),
+  writeFile('readme.txt', 'Hello World!'),
+  writeFile('readme.json', '{ "hello": "world"}' ),
+]);
+
+
+// Sequential Execution
+// var beep = () => process.stdout.write("\x07");
+
+// async function start() {
+//   const files = await readdir(__dirname);
+//   console.log(files);
+// }
+
+// start();
 
 // Example 1
 // const doStuffSequentially = async () => {
