@@ -11,9 +11,9 @@ var delay = (seconds) => new Promise((resolves) => {
 
 
 Promise.all([
-  writeFile('readme.md', 'Hello World!'),
-  writeFile('readme.txt', 'Hello World!'),
-  writeFile('readme.json', '{ "hello": "world"}' ),
+  unlink('readme.md'),
+  unlink('readme.txt'),
+  unlink('readme.json'),
 ]);
 
 
