@@ -9,12 +9,21 @@ var delay = (seconds) => new Promise((resolves) => {
   setTimeout(resolves, seconds*1000);
 });
 
+Promise.race([
+  delay(5),
+  delay(2),
+  delay(3),
+  delay(5),
+]).then(() => readdir(__dirname))
+  .then(console.log)
 
-Promise.all([
-  unlink('readme.md'),
-  unlink('readme.txt'),
-  unlink('readme.json'),
-]);
+// Promise.all([
+//   unlink('readme.md'),
+//   unlink('readme.txt'),
+//   delay(3),
+//   unlink('readme.json'),
+// ]).then(() => readdir(__dirname))
+//   .then(console.log)
 
 
 // Sequential Execution
