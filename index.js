@@ -3,7 +3,7 @@ import fs from 'fs';
 const readStream = fs.createReadStream("./powder-day.mp4");
 
 readStream.on("data", (chunk) => {
-    // console.log('size: ' + chunk.length);
+    console.log('size: ' + chunk.length);
     // console.log("read data ==>", chunk);
 });
 
@@ -16,11 +16,17 @@ readStream.on("error", (error) => {
     console.error(error)
 });
 
-// Non-flowing streams - user have to ask for streams from terminal
+readStream.pause();
+
 process.stdin.on("data", (chunk) => {
-    var text = chunk.toString().trim();
-    console.log('echo: ' + text);
+   readStream.read();
 })
+
+// // Non-flowing streams - user have to ask for streams from terminal
+// process.stdin.on("data", (chunk) => {
+//     var text = chunk.toString().trim();
+//     console.log('echo: ' + text);
+// })
 
 
 
