@@ -1,29 +1,46 @@
-import fs from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 
-const readStream = fs.createReadStream("./powder-day.mp4");
+// Write Stream: Idea is to create copy of mp4 file
+const readStream = createReadStream("./powder-day.mp4");
+const writeStream = createWriteStream("copy.mp4");
 
 readStream.on("data", (chunk) => {
-    console.log('size: ' + chunk.length);
+    writeStream.write(chunk);
+    // console.log('size: ' + chunk.length);
     // console.log("read data ==>", chunk);
 });
 
-readStream.on("end", () => {
-    console.log("read stream finished.");
-});
-
 readStream.on("error", (error) => {
-    console.log("an error occured.");
-    console.error(error)
+    console.log("an error occurred: ", error.message);
 });
 
-readStream.pause();
+readStream.on("end", () => {
+    writeStream.end();
+    // console.log("read stream finished.");
+});
 
-process.stdin.on("data", (chunk) => {
-    if(chunk.toString().trim() === 'finish') {
-        readStream.resume();
-    }
-   readStream.read();
-})
+writeStream.on("close", () => {
+    process.stdout.write('file copied\n');
+});
+
+
+
+
+
+
+
+
+
+
+
+// readStream.pause();
+
+// process.stdin.on("data", (chunk) => {
+//     if(chunk.toString().trim() === 'finish') {
+//         readStream.resume();
+//     }
+//    readStream.read();
+// })
 
 // // Non-flowing streams - user have to ask for streams from terminal
 // process.stdin.on("data", (chunk) => {
