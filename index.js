@@ -5,7 +5,11 @@ const readStream = createReadStream("./powder-day.mp4");
 const writeStream = createWriteStream("copy.mp4");
 
 readStream.on("data", (chunk) => {
-    writeStream.write(chunk);
+    const result = writeStream.write(chunk);
+    if(!result) {
+        console.log('backpressure');
+        readStream.pause();
+    }
     // console.log('size: ' + chunk.length);
     // console.log("read data ==>", chunk);
 });
@@ -21,6 +25,11 @@ readStream.on("end", () => {
 
 writeStream.on("close", () => {
     process.stdout.write('file copied\n');
+});
+
+writeStream.on("drain", () => {
+    console.log('drained');
+    readStream.resume();
 });
 
 
