@@ -1,10 +1,23 @@
-import { createReadStream, createWriteStream } from 'fs';
+import { createWriteStream } from 'fs';
 
-// Write Stream: Idea is to create copy of mp4 file
-const readStream = createReadStream("./powder-day.mp4");
-const writeStream = createWriteStream("copy.mp4");
+const writeStream = createWriteStream("file.txt");
 
-readStream.pipe(writeStream).on('error', console.error)
+process.stdin.pipe(writeStream).on('error', console.error)
+
+
+
+
+// import { createReadStream, createWriteStream } from 'fs';
+
+// // Write Stream: Idea is to create copy of mp4 file
+// const readStream = createReadStream("./powder-day.mp4");
+// const writeStream = createWriteStream("copy.mp4");
+
+// readStream.pipe(writeStream).on('error', console.error)
+
+
+
+
 
 
 
