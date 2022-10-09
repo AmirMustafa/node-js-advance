@@ -1,19 +1,23 @@
-import { createWriteStream } from 'fs';
+import { PassThrough } from 'stream';
 
-const writeStream = createWriteStream("file.txt");
+import { createReadStream, createWriteStream } from 'fs';
 
-process.stdin.pipe(writeStream).on('error', console.error)
+const readStream = createReadStream("./powder-day.mp4");
+const writeStream = createWriteStream("copy.mp4");
 
+// Duplex stream
+const report = new PassThrough();
 
+let total = 0;
+report.on('data', (chunk) => {
+    total += chunk.length;
+    console.log(`Bytes: ${total}`);
+});
 
-
-// import { createReadStream, createWriteStream } from 'fs';
-
-// // Write Stream: Idea is to create copy of mp4 file
-// const readStream = createReadStream("./powder-day.mp4");
-// const writeStream = createWriteStream("copy.mp4");
-
-// readStream.pipe(writeStream).on('error', console.error)
+readStream
+    .pipe(report)
+    .pipe(writeStream)
+    .on('error', console.error)
 
 
 
