@@ -1,78 +1,26 @@
-import { PassThrough, Duplex } from 'stream';
+import { Transform } from 'stream';
 
-import { createReadStream, createWriteStream } from 'fs';
-
-const readStream = createReadStream("./powder-day.mp4");
-const writeStream = createWriteStream("copy.mp4");
-
-class Throttle extends Duplex {
-    constructor(milliseconds) {
+class ReplaceText extends Transform {
+    constructor(char) {
         super();
-        this.delay = milliseconds;
+        this.replaceChar = char;
     }
 
-    _write(chunk, encoding, callback) {
-        this.push(chunk);
-        setTimeout(callback, this.delay);
+    _transform(chunk, encoding, callback) {
+        const transformChunk = chunk.toString().replace(/[a-z]|[A-Z]|[0-9]/g, this.replaceChar);
+        this.push(transformChunk);
+        callback();
+
     }
 
-    _read() {}
-
-    _final() {
-        this.push(null);
+    _flush(callback) {
+        this.push('more stuff is being passed...');
+        callback();
     }
 }
 
-// Duplex stream
-const report = new PassThrough();
-const throttle = new Throttle(100);
+let xStream = new ReplaceText('x');
 
-let total = 0;
-report.on('data', (chunk) => {
-    total += chunk.length;
-    console.log(`Bytes: ${total}`);
-});
-
-readStream
-    .pipe(throttle)
-    .pipe(report)
-    .pipe(writeStream)
-    .on('error', console.error)
-
-
-
-
-
-
-
-// const writeStream = createWriteStream("copy.mp4", {
-//     highWaterMark: 2628920
-// });
-
-// readStream.on("data", (chunk) => {
-//     const result = writeStream.write(chunk);
-//     if(!result) {
-//         console.log('backpressure');
-//         readStream.pause();
-//     }
-//     // console.log('size: ' + chunk.length);
-//     // console.log("read data ==>", chunk);
-// });
-
-// readStream.on("error", (error) => {
-//     console.log("an error occurred: ", error.message);
-// });
-
-// readStream.on("end", () => {
-//     writeStream.end();
-//     // console.log("read stream finished.");
-// });
-
-// writeStream.on("close", () => {
-//     process.stdout.write('file copied\n');
-// });
-
-// writeStream.on("drain", () => {
-//     console.log('drained');
-//     readStream.resume();
-// });
+process.stdin
+    .pipe(xStream)
+    .pipe(process.stdout)
