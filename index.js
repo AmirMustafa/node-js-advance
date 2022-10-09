@@ -1,12 +1,31 @@
-import { PassThrough } from 'stream';
+import { PassThrough, Duplex } from 'stream';
 
 import { createReadStream, createWriteStream } from 'fs';
 
 const readStream = createReadStream("./powder-day.mp4");
 const writeStream = createWriteStream("copy.mp4");
 
+class Throttle extends Duplex {
+    constructor(milliseconds) {
+        super();
+        this.delay = milliseconds;
+    }
+
+    _write(chunk, encoding, callback) {
+        this.push(chunk);
+        setTimeout(callback, this.delay);
+    }
+
+    _read() {}
+
+    _final() {
+        this.push(null);
+    }
+}
+
 // Duplex stream
 const report = new PassThrough();
+const throttle = new Throttle(100);
 
 let total = 0;
 report.on('data', (chunk) => {
@@ -15,6 +34,7 @@ report.on('data', (chunk) => {
 });
 
 readStream
+    .pipe(throttle)
     .pipe(report)
     .pipe(writeStream)
     .on('error', console.error)
