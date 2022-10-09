@@ -1,26 +1,9 @@
-import { Transform } from 'stream';
+import { createServer } from 'http';
+import { createReadStream } from 'fs';
+const fileName = 'powder-day.mp4';
 
-class ReplaceText extends Transform {
-    constructor(char) {
-        super();
-        this.replaceChar = char;
-    }
+createServer((req, res) => {
+    res.writeHead(200, {  'Content-Type': 'video/mp4'});
+    createReadStream(fileName).pipe(res);
 
-    _transform(chunk, encoding, callback) {
-        const transformChunk = chunk.toString().replace(/[a-z]|[A-Z]|[0-9]/g, this.replaceChar);
-        this.push(transformChunk);
-        callback();
-
-    }
-
-    _flush(callback) {
-        this.push('more stuff is being passed...');
-        callback();
-    }
-}
-
-let xStream = new ReplaceText('x');
-
-process.stdin
-    .pipe(xStream)
-    .pipe(process.stdout)
+}).listen(3000, () => console.log('Server listening on port - 3000'));
