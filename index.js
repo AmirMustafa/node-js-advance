@@ -1,5 +1,5 @@
 import { createServer } from 'http';
-import { stat, createReadStream } from 'fs';
+import { stat, createReadStream, createWriteStream } from 'fs';
 import { promisify } from 'util';
 const fileName = 'powder-day.mp4';
 const fileInfo = promisify(stat);
@@ -29,7 +29,12 @@ const responseWithVideo = async (req, res) => {
 }
 
 createServer((req, res) => {
-    if(req.url === '/video') {
+    if(req.method === 'POST') {
+        req.pipe(res);            // req is readable stream, res is writable stream
+        req.pipe(process.stdout); // will display in terminal
+        req.pipe(createWriteStream('./upload.file')); // writing to a file
+
+    } else if(req.url === '/video') {
         responseWithVideo(req, res);
     } else {
         res.writeHead(200, { 'Content-Type': 'text/html' });

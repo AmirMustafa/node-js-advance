@@ -1,0 +1,18 @@
+------WebKitFormBoundarylcBsPe0RtGqIIed4
+Content-Disposition: form-data; name="upload-file"; filename="Dockerfile"
+Content-Type: application/octet-stream
+
+FROM node:14
+
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD [ "node", "app.mjs" ]
+------WebKitFormBoundarylcBsPe0RtGqIIed4--
