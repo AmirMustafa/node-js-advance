@@ -1,6 +1,7 @@
 import { createServer } from 'http';
 import { stat, createReadStream, createWriteStream } from 'fs';
 import { promisify } from 'util';
+import multiparty from 'multiparty';
 const fileName = 'powder-day.mp4';
 const fileInfo = promisify(stat);
 
@@ -30,9 +31,20 @@ const responseWithVideo = async (req, res) => {
 
 createServer((req, res) => {
     if(req.method === 'POST') {
-        req.pipe(res);            // req is readable stream, res is writable stream
-        req.pipe(process.stdout); // will display in terminal
-        req.pipe(createWriteStream('./upload.file')); // writing to a file
+        let form = new multiparty.Form();
+        form.on('part', (part) => {
+            // console.log('part ===>', part);
+            part
+              .pipe(createWriteStream(`./${part.filename}`))
+              .on('close', () => {
+                    res.writeHead(200, {  'Content-Type': 'text/html'});
+                    res.end(`<h1>File uploaded: ${part.filename}</h1>`);
+               })
+        });
+        form.parse(req);
+        // req.pipe(res);            // req is readable stream, res is writable stream
+        // req.pipe(process.stdout); // will display in terminal
+        // req.pipe(createWriteStream('./upload.file')); // writing to a file
 
     } else if(req.url === '/video') {
         responseWithVideo(req, res);
